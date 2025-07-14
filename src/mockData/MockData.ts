@@ -1,4 +1,4 @@
-import { ObservationDataset } from "../types";
+import { ObservationDataset } from "../types/types";
 
 export const deformationData: ObservationDataset = {
   Stockholm: {

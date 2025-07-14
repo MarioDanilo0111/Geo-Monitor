@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import DeformationChart from "./components/DeformationChart";
-import { City, ObservationEntry, ObservationType } from "./types";
+import { City, ObservationEntry, ObservationType } from "./types/types";
 import { fetchObservation } from "./services/fetchObservations";
 import { simulateForecast } from "./services/predic";
 import SelectorFunction from "./components/Selector";

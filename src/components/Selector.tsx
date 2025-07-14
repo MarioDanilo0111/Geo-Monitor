@@ -1,4 +1,4 @@
-import { ForecastSelectorProps } from "../types";
+import { ForecastSelectorProps } from "../types/types";
 
 export default function SelectorFunction({
   value,
