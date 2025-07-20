@@ -21,3 +21,13 @@ export type ForecastSelectorProps = {
   onChange: (value: number) => void;
   options?: number[];
 };
+
+export type ForecastInputProps = {
+  values: number[];
+  monthsAhead: number;
+};
+
+export type ForecastOutputProps = {
+  projectedValues: number[];
+  summary?: string;
+};

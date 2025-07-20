@@ -9,11 +9,8 @@ export default function SelectorFunction({
     <select value={value} onChange={(e) => onChange(Number(e.target.value))}>
       {options.map((opt) => (
         <option key={opt} value={opt}>
-          {" "}
-          <strong>{opt}</strong>
-          month
-          {opt > 1 ? "s" : ""}
-          ahead
+          {opt} month
+          {opt > 1 ? "s" : " "} ahead
         </option>
       ))}
     </select>

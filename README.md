@@ -30,7 +30,24 @@ The application allows users to:
 The app calculates the difference between the last two values in the dataset and continues that trend into the future.
 
 Example:
+
 ```txt
 Last two values: 5.0 → 5.4 (delta = 0.4)
 User selects "3 months ahead"
 Forecast: 5.8 → 6.2 → 6.6 mm
+
+```
+
+## Forecast Visualization
+
+To clearly separate real observations from predictions, the app uses two chart datasets:
+
+- Observed data is shown as a solid line.
+- Forecasted values are rendered as a dashed line, beginning just after the last observation.
+- This approach ensures a clean visual transition between actual and projected values, without the need for null padding inside a single dataset.
+
+The timeline (X-axis) is unified and fully synced across both datasets.
+
+## 🚀 Try It Live
+
+👉 [Geo Monitor a netlify.app](https://geo-monitor.netlify.app/)

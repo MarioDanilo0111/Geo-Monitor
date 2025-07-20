@@ -1,2 +1,4 @@
 node_modules
 package-lock.json
+src/components/ForecastTester.tsx
+src/mockData/ForecastMock.ts
