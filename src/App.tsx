@@ -4,6 +4,7 @@ import { City, ObservationEntry, ObservationType } from "./types/types";
 import { fetchObservation } from "./services/fetchObservations";
 import { simulateForecast } from "./services/predic";
 import SelectorFunction from "./components/Selector";
+import generateLinearForecast from "./forecast/ForecastEngine";
 
 export default function App() {
   const [location, setLocation] = useState<City>("Stockholm");
@@ -31,6 +32,22 @@ export default function App() {
     getObservation();
   }, [location, type]);
 
+  function generateFutureDates(startDate: string, count: number): string[] {
+    const baseDate = new Date(startDate);
+    const futureDate: string[] = [];
+
+    console.log("Future Date!!: ", futureDate);
+    console.log("Base Date!!: ", baseDate);
+
+    for (let i = 1; i <= count; i++) {
+      let newDate = new Date(baseDate);
+      newDate.setMonth(baseDate.getMonth() + i);
+      const iso = newDate.toISOString().slice(0, 7);
+      futureDate.push(iso);
+    }
+    return futureDate;
+  }
+
   return (
     <div>
       <select
@@ -57,8 +74,34 @@ export default function App() {
           </h1>
           <p>{data?.summary}</p>
 
-          <DeformationChart dates={data.dates} values={data.values} />
+          {data &&
+            (() => {
+              const minItemsForTrend = 2;
+              const sliceCount = Math.max(monthsAhead, minItemsForTrend);
+              const onlyLastItems = data.values.slice(-sliceCount);
+              const onlyLastDates = data.dates.slice(-monthsAhead);
+              const lastDate = onlyLastDates[onlyLastDates.length - 1];
 
+              const forecast = generateLinearForecast({
+                values: onlyLastItems,
+                monthsAhead,
+              });
+
+              const futureDates = generateFutureDates(lastDate, monthsAhead);
+
+              const fullDates = [
+                ...onlyLastDates,
+                ...futureDates.map((d) => d.slice(0, 7)),
+              ];
+
+              return (
+                <DeformationChart
+                  dates={fullDates}
+                  observed={onlyLastItems}
+                  forecast={forecast.projectedValues}
+                />
+              );
+            })()}
           <div className="bg-gray-100 p-3 rounded-md text-sm mt-4">
             <SelectorFunction value={monthsAhead} onChange={setMonthsAhead} />
             {data && (

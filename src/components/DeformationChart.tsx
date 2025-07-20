@@ -20,18 +20,27 @@ ChartJS.register(
 
 type Props = {
   dates: string[];
-  values: number[];
+  observed: number[];
+  forecast: number[];
 };
 
-export default function DeformationChart({ dates, values }: Props) {
+export default function DeformationChart({ dates, observed, forecast }: Props) {
+  const observedLength = observed.length;
   const data = {
     labels: dates,
     datasets: [
       {
-        label: "Deformation (mm)",
-        data: values,
+        label: "Observed",
+        data: [...observed, ...Array(forecast.length).fill(null)],
         fill: false,
         borderColor: "rgba(75,192,192,1)",
+        tension: 0.3,
+      },
+      {
+        label: "Forecast",
+        data: [...Array(observedLength).fill(null), ...forecast],
+        borderColor: "rgba(255,99,132,1)",
+        borderDash: [5, 5], // dashed line
         tension: 0.3,
       },
     ],
