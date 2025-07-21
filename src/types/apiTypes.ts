@@ -7,9 +7,9 @@ export type Location = {
 
 /* GET /forecast/:locationId */
 export type ForecastEntry = {
-  timeStamp: string;
+  timestamp: string;
   observed: number;
-  prediction: number;
+  predicted: number;
 };
 
 export type ForecastResponse = {
