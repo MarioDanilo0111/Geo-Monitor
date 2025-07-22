@@ -3,7 +3,7 @@ import DeformationChart from "./components/DeformationChart";
 import { City, ObservationEntry, ObservationType } from "./types/types";
 import { fetchObservation } from "./services/fetchObservations";
 import { simulateForecast } from "./services/predic";
-import SelectorFunction from "./components/Selector";
+import SelectorFunction from "./components/ForecastSelector";
 import generateLinearForecast from "./forecast/ForecastEngine";
 
 export default function App() {
@@ -25,7 +25,6 @@ export default function App() {
     } finally {
       setLoading(false);
     }
-    console.log("Data Values: ", data?.values);
   };
 
   useEffect(() => {
