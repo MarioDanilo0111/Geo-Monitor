@@ -5,6 +5,7 @@ import { fetchObservation } from "./services/fetchObservations";
 import { simulateForecast } from "./services/predic";
 import SelectorFunction from "./components/ForecastSelector";
 import generateLinearForecast from "./forecast/ForecastEngine";
+import ForecastDeformationChart from "./components/ForecastDeformationChart";
 
 export default function App() {
   const [location, setLocation] = useState<City>("Stockholm");
@@ -103,6 +104,7 @@ export default function App() {
             })()}
           <div className="bg-gray-100 p-3 rounded-md text-sm mt-4">
             <SelectorFunction value={monthsAhead} onChange={setMonthsAhead} />
+            <ForecastDeformationChart />
             {data && (
               <p
                 style={{

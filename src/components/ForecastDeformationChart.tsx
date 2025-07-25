@@ -62,6 +62,22 @@ export default function ForecastDeformationChart() {
     });
   }
 
+  if (seasonBucket && seasonBucket) {
+    let averagePerSeason: Record<string, number> = {};
+
+    Object.entries(seasonBucket).forEach(([season, values]) => {
+      if (values.length > 0) {
+        const sumValues: number = (values as number[]).reduce(
+          (acc, val) => acc + val,
+          0
+        );
+        const avgOfSumValues: number = sumValues / values.length;
+        averagePerSeason[season] = avgOfSumValues;
+      }
+    });
+    console.log("Average Per Season: ", averagePerSeason);
+  }
+
   return (
     <div>
       {loading ? (
