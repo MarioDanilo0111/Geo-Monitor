@@ -4,6 +4,7 @@ import { Location } from "../types/apiTypes";
 import { fetchForecastByLocation } from "../services/geoMonitorAPI";
 import { ForecastResponse } from "../types/apiTypes";
 import { seasonBucket } from "../mockData/SeasonBucket";
+import SeasonalRiskChart from "./SeasonalRiskChart";
 
 export default function ForecastDeformationChart() {
   const [location, setLocation] = useState<Location[]>();
@@ -62,9 +63,15 @@ export default function ForecastDeformationChart() {
     });
   }
 
-  if (seasonBucket && seasonBucket) {
-    let averagePerSeason: Record<string, number> = {};
+  type SeasonKey = "spring" | "summer" | "autumn" | "winter";
 
+  let averagePerSeason: Record<SeasonKey, number> = {
+    spring: 0,
+    summer: 0,
+    autumn: 0,
+    winter: 0,
+  };
+  if (seasonBucket && seasonBucket) {
     Object.entries(seasonBucket).forEach(([season, values]) => {
       if (values.length > 0) {
         const sumValues: number = (values as number[]).reduce(
@@ -72,7 +79,8 @@ export default function ForecastDeformationChart() {
           0
         );
         const avgOfSumValues: number = sumValues / values.length;
-        averagePerSeason[season] = avgOfSumValues;
+        const key = season as SeasonKey;
+        averagePerSeason[key] = avgOfSumValues;
       }
     });
     console.log("Average Per Season: ", averagePerSeason);
@@ -87,7 +95,7 @@ export default function ForecastDeformationChart() {
           value={selectCityId}
           onChange={(e) => setSelectCityId(e.target.value)}
         >
-          <option></option>
+          <option>Select City</option>
           {location &&
             location.map((loca) => (
               <option key={loca.id} value={loca.id}>
@@ -95,6 +103,10 @@ export default function ForecastDeformationChart() {
               </option>
             ))}
         </select>
+      )}
+
+      {Object.keys(averagePerSeason).length > 0 && (
+        <SeasonalRiskChart averagePerSeason={averagePerSeason} />
       )}
     </div>
   );

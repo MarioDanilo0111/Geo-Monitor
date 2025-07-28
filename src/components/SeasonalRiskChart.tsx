@@ -21,7 +21,7 @@ ChartJS.register(
 
 import { Radar } from "react-chartjs-2";
 
-interface SeasonalRiskProps {
+export interface SeasonalRiskProps {
   averagePerSeason: {
     spring: number;
     summer: number;
@@ -38,9 +38,9 @@ export default function SeasonalRiskChart({
     if (value >= 2 && value < 4) return "yellow";
     return "red";
   });
+  const backGrundColor = colorDesignatorLoop;
 
   const data = {
-    colorDesignatorLoop: colorDesignatorLoop,
     labels: ["Spring", "Summer", "Autumn", "Winter"],
     datasets: [
       {
@@ -51,7 +51,8 @@ export default function SeasonalRiskChart({
           averagePerSeason.autumn,
           averagePerSeason.winter,
         ],
-        backgroundColor: "rgba(255,99,132,0.2)",
+        tension: 0.29,
+        backgroundColor: backGrundColor,
         borderColor: "rgba(255,99,132,1)",
         borderWidth: 1,
       },
