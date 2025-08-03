@@ -8,6 +8,7 @@ import {
   Legend,
   Title,
 } from "chart.js";
+import { Radar } from "react-chartjs-2";
 
 ChartJS.register(
   RadialLinearScale,
@@ -19,8 +20,6 @@ ChartJS.register(
   Title
 );
 
-import { Radar } from "react-chartjs-2";
-
 export interface SeasonalRiskProps {
   averagePerSeason: {
     spring: number;
@@ -28,40 +27,114 @@ export interface SeasonalRiskProps {
     autumn: number;
     winter: number;
   };
+  monthRiskData: number[];
+  seasonColorMonth: string[];
 }
 
 export default function SeasonalRiskChart({
   averagePerSeason,
+  monthRiskData,
+  seasonColorMonth,
 }: SeasonalRiskProps) {
   const colorDesignatorLoop = Object.values(averagePerSeason).map((value) => {
     if (value < 2) return "green";
     if (value >= 2 && value < 4) return "yellow";
     return "red";
   });
-  const backGrundColor = colorDesignatorLoop;
+
+  /* console.log("this here is Seasonal Color by Month: ", seasonColorMonth); */
+
+  interface Options {
+    scales: {
+      r: {
+        grid: {
+          color: string;
+        };
+        angleLines: {
+          color: string;
+        };
+        pointLables: {
+          font: {
+            size: number;
+          };
+        };
+        ticks: {
+          display: boolean;
+        };
+      };
+    };
+  }
+
+  const options: Options = {
+    scales: {
+      r: {
+        grid: {
+          color: "#ddd",
+        },
+        angleLines: {
+          color: "#ddd",
+        },
+        pointLables: {
+          font: {
+            size: 10,
+          },
+        },
+        ticks: {
+          display: false,
+        },
+      },
+    },
+  };
+  const labels = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
 
   const data = {
-    labels: ["Spring", "Summer", "Autumn", "Winter"],
+    labels: labels,
     datasets: [
       {
-        label: "Deformation Risk",
-        data: [
-          averagePerSeason.spring,
-          averagePerSeason.summer,
-          averagePerSeason.autumn,
-          averagePerSeason.winter,
-        ],
-        tension: 0.29,
-        backgroundColor: backGrundColor,
-        borderColor: "rgba(255,99,132,1)",
-        borderWidth: 1,
+        label: "Malmö",
+        data: monthRiskData,
+        borderColor: "#1abc9c",
+        backgroundColor: seasonColorMonth,
+        pointBackgroundColor: seasonColorMonth,
+        borderWidth: 2,
+        tension: 0.4,
+        pointRadius: 3,
+        pointHoverRadius: 5,
+        fill: false,
+      },
+      {
+        label: "Göteborg",
+        data: monthRiskData,
+        borderColor: "#1abc9c",
+        backgroundColor: seasonColorMonth,
+        pointBackgroundColor: seasonColorMonth,
+        borderWidth: 2,
+        tension: 0.4,
+        pointRadius: 3,
+        pointHoverRadius: 5,
+        fill: false,
       },
     ],
   };
 
   return (
     <>
-      <Radar data={data} />
+      {Object.keys(monthRiskData).length >= 12 && (
+        <Radar data={data} options={options} />
+      )}
     </>
   );
 }

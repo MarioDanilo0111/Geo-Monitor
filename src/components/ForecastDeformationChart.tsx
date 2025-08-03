@@ -45,6 +45,26 @@ export default function ForecastDeformationChart() {
     fetchForecast();
   }, [selectCityId]);
 
+  const seasonColorMonth: string[] = new Array(12).fill("");
+  if (seasonColorMonth) {
+    seasonColorMonth.forEach((_, index) => {
+      if (index >= 0 && index <= 2) {
+        const colorValue: string = "rgba(0, 128, 255, 0.2)"; //winter
+        seasonColorMonth[index] = colorValue;
+      } else if (index >= 3 && index <= 5) {
+        const colorValue: string = "rgba(0, 200, 100, 0.2)"; //spring
+        seasonColorMonth[index] = colorValue;
+      } else if (index >= 6 && index <= 8) {
+        const colorValue: string = "rgba(255, 255, 100, 0.2)"; //summer
+        seasonColorMonth[index] = colorValue;
+      } else {
+        const colorValue: string = "rgba(255, 165, 0, 0.2)"; //autumn
+        seasonColorMonth[index] = colorValue;
+      }
+    });
+    /* console.log("Date to Number: ", seasonColorMonth); */
+  }
+
   if (forecastData && forecastData) {
     forecastData.forecast.forEach(function (date) {
       let month: string = date.timestamp.slice(5, 7);
@@ -83,7 +103,17 @@ export default function ForecastDeformationChart() {
         averagePerSeason[key] = avgOfSumValues;
       }
     });
-    console.log("Average Per Season: ", averagePerSeason);
+  }
+
+  const monthRiskData: number[] = new Array(12).fill(1);
+  /* console.log("month Risk Data array: ", monthRiskData); */
+
+  if (forecastData) {
+    forecastData.forecast.forEach((date) => {
+      const stamps: string = date.timestamp.slice(5, 7);
+      const toNumber = parseInt(stamps);
+      monthRiskData[toNumber - 1] = date.predicted;
+    });
   }
 
   return (
@@ -106,7 +136,11 @@ export default function ForecastDeformationChart() {
       )}
 
       {Object.keys(averagePerSeason).length > 0 && (
-        <SeasonalRiskChart averagePerSeason={averagePerSeason} />
+        <SeasonalRiskChart
+          monthRiskData={monthRiskData}
+          averagePerSeason={averagePerSeason}
+          seasonColorMonth={seasonColorMonth}
+        />
       )}
     </div>
   );

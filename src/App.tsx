@@ -36,8 +36,8 @@ export default function App() {
     const baseDate = new Date(startDate);
     const futureDate: string[] = [];
 
-    console.log("Future Date!!: ", futureDate);
-    console.log("Base Date!!: ", baseDate);
+    /* console.log("Future Date!!: ", futureDate);
+    console.log("Base Date!!: ", baseDate); */
 
     for (let i = 1; i <= count; i++) {
       let newDate = new Date(baseDate);
