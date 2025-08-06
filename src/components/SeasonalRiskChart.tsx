@@ -106,7 +106,7 @@ export default function SeasonalRiskChart({
       {
         label: "Malmö",
         data: monthRiskData,
-        borderColor: "#1abc9c",
+        borderColor: "#00f2fe",
         backgroundColor: seasonColorMonth,
         pointBackgroundColor: seasonColorMonth,
         borderWidth: 2,
@@ -118,7 +118,7 @@ export default function SeasonalRiskChart({
       {
         label: "Göteborg",
         data: monthRiskData,
-        borderColor: "#1abc9c",
+        borderColor: "#00f2fe",
         backgroundColor: seasonColorMonth,
         pointBackgroundColor: seasonColorMonth,
         borderWidth: 2,

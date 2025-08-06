@@ -5,9 +5,10 @@ import { fetchForecastByLocation } from "../services/geoMonitorAPI";
 import { ForecastResponse } from "../types/apiTypes";
 import { seasonBucket } from "../mockData/SeasonBucket";
 import SeasonalRiskChart from "./SeasonalRiskChart";
+import { SeasonalRiskChartDropdown } from "./SeasonalRiskChartDropdown";
 
 export default function ForecastDeformationChart() {
-  const [location, setLocation] = useState<Location[]>();
+  const [locations, setLocations] = useState<Location[]>([]);
   const [loading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectCityId, setSelectCityId] = useState<string>("");
@@ -19,7 +20,7 @@ export default function ForecastDeformationChart() {
     setIsLoading(true);
     try {
       const res = await fetchLocations();
-      setLocation(res);
+      setLocations(res);
       setIsLoading(false);
     } catch (err) {
       console.error("Error fetching data: ", err);
@@ -115,25 +116,21 @@ export default function ForecastDeformationChart() {
       monthRiskData[toNumber - 1] = date.predicted;
     });
   }
+  let isLoading = null;
+  {
+    loading ? <p>Loading...</p> : <p>No Data</p>;
+  }
 
   return (
     <div>
-      {loading ? (
-        <p>Loading...</p>
-      ) : (
-        <select
-          value={selectCityId}
-          onChange={(e) => setSelectCityId(e.target.value)}
-        >
-          <option>Select City</option>
-          {location &&
-            location.map((loca) => (
-              <option key={loca.id} value={loca.id}>
-                {loca.name}
-              </option>
-            ))}
-        </select>
-      )}
+      {isLoading}
+      <SeasonalRiskChartDropdown
+        locations={locations}
+        selectedLocationId={selectCityId}
+        onChange={(id) => {
+          setSelectCityId(id);
+        }}
+      />
 
       {Object.keys(averagePerSeason).length > 0 && (
         <SeasonalRiskChart
