@@ -46,5 +46,9 @@ export default function DeformationChart({ dates, observed, forecast }: Props) {
     ],
   };
 
-  return <Line data={data} />;
+  return (
+    <>
+      <Line data={data} />
+    </>
+  );
 }

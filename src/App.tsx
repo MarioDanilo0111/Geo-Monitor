@@ -6,6 +6,8 @@ import { simulateForecast } from "./services/predic";
 import SelectorFunction from "./components/ForecastSelector";
 import generateLinearForecast from "./forecast/ForecastEngine";
 import ForecastDeformationChart from "./components/ForecastDeformationChart";
+import { Dropdowns } from "./components/Dropdowns";
+import { deformationData } from "./mockData/MockData";
 
 export default function App() {
   const [location, setLocation] = useState<City>("Stockholm");
@@ -13,8 +15,6 @@ export default function App() {
   const [data, setData] = useState<ObservationEntry | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [monthsAhead, setMonthsAhead] = useState(1);
-
-  //const data = deformationData[location][type];
 
   const getObservation = async () => {
     setLoading(true);
@@ -36,9 +36,6 @@ export default function App() {
     const baseDate = new Date(startDate);
     const futureDate: string[] = [];
 
-    /* console.log("Future Date!!: ", futureDate);
-    console.log("Base Date!!: ", baseDate); */
-
     for (let i = 1; i <= count; i++) {
       let newDate = new Date(baseDate);
       newDate.setMonth(baseDate.getMonth() + i);
@@ -48,82 +45,92 @@ export default function App() {
     return futureDate;
   }
 
+  let deformationChart = null;
+  let linearForecast = null;
+  let summeryText = null;
+
+  if (data) {
+    const minItemsForTrend = 2;
+    const sliceCount = Math.max(monthsAhead, minItemsForTrend);
+    const onlyLastItems = data.values.slice(-sliceCount);
+    const onlyLastDates = data.dates.slice(-monthsAhead);
+    const lastDate = onlyLastDates[onlyLastDates.length - 1];
+
+    const forecast = generateLinearForecast({
+      values: onlyLastItems,
+      monthsAhead,
+    });
+
+    const futureDates = generateFutureDates(lastDate, monthsAhead);
+
+    const fullDates = [
+      ...onlyLastDates,
+      ...futureDates.map((d) => d.slice(0, 7)),
+    ];
+
+    summeryText = (
+      <p>🛰️ {simulateForecast(data.values, data.unit, monthsAhead)}</p>
+    );
+
+    linearForecast = (
+      <SelectorFunction value={monthsAhead} onChange={setMonthsAhead} />
+    );
+    deformationChart = (
+      <DeformationChart
+        dates={fullDates}
+        observed={onlyLastItems}
+        forecast={forecast.projectedValues}
+      />
+    );
+  }
+
+  let loadingState = null;
+  {
+    loading ? <p>Loading data</p> : <p>No Data loaded...</p>;
+  }
+
   return (
-    <div>
-      <select
-        value={location}
-        onChange={(e) => setLocation(e.target.value as City)}
-      >
-        <option value="Stockholm">Stockholm</option>
-        <option value="Kiruna">Kiruna</option>
-      </select>
+    <div className="min-h-screen bg-gray-900 text-white py-8">
+      {loadingState}
+      <div className="container mx-auto px-4">
+        <div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8 items-start">
+            <div className="bg-gray-800 p-6 rounded-lg shadow-md">
+              <div className="text-lg font-semibold mb-2">
+                <h1>
+                  {location} - {type}
+                </h1>
+              </div>
+              <Dropdowns
+                city={Object.keys(deformationData) as City[]}
+                selectedCity={location}
+                onCityChange={setLocation}
+                selectedType={type}
+                onTypeChange={setType}
+              />
+              <div>
+                <div>{deformationChart}</div>
+              </div>
+              {linearForecast}
+              <div className="py-8 ps-3">
+                <div className="pt-1">
+                  <p> - {data?.summary}</p>
+                </div>
+                <div className="pt-1 pb-3">
+                  <p> - {summeryText}</p>
+                </div>
+              </div>
+            </div>
 
-      <select
-        value={type}
-        onChange={(e) => setType(e.target.value as "deformation" | "water")}
-      >
-        <option value="deformation">Deformation</option>
-        <option value="water">Water Change</option>
-      </select>
-      {loading ? (
-        <p>Loading data...</p>
-      ) : data ? (
-        <>
-          <h1>
-            {location} - {type}
-          </h1>
-          <p>{data?.summary}</p>
-
-          {data &&
-            (() => {
-              const minItemsForTrend = 2;
-              const sliceCount = Math.max(monthsAhead, minItemsForTrend);
-              const onlyLastItems = data.values.slice(-sliceCount);
-              const onlyLastDates = data.dates.slice(-monthsAhead);
-              const lastDate = onlyLastDates[onlyLastDates.length - 1];
-
-              const forecast = generateLinearForecast({
-                values: onlyLastItems,
-                monthsAhead,
-              });
-
-              const futureDates = generateFutureDates(lastDate, monthsAhead);
-
-              const fullDates = [
-                ...onlyLastDates,
-                ...futureDates.map((d) => d.slice(0, 7)),
-              ];
-
-              return (
-                <DeformationChart
-                  dates={fullDates}
-                  observed={onlyLastItems}
-                  forecast={forecast.projectedValues}
-                />
-              );
-            })()}
-          <div className="bg-gray-100 p-3 rounded-md text-sm mt-4">
-            <SelectorFunction value={monthsAhead} onChange={setMonthsAhead} />
-            <ForecastDeformationChart />
-            {data && (
-              <p
-                style={{
-                  backgroundColor: "#f4f4f4",
-                  fontStyle: "italic",
-                  marginTop: "1.5rem",
-                  borderRadius: "8px",
-                  fontSize: "0.95rem",
-                  padding: "1rem",
-                }}
-              >
-                🛰️ {simulateForecast(data.values, data.unit, monthsAhead)}
-              </p>
-            )}
+            <div className="bg-gray-800 p-6 rounded-lg shadow-md">
+              <h2 className="text-lg font-semibold mb-2">
+                Risk Pattern (Radar)
+              </h2>
+              <ForecastDeformationChart />
+            </div>
           </div>
-        </>
-      ) : (
-        <p>No data loaded</p>
-      )}
+        </div>
+      </div>
     </div>
   );
 }
